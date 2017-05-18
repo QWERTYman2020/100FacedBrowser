@@ -8,7 +8,13 @@ import java.nio.file.AccessDeniedException;
  * @author Bart Terpstra
  */
 public class Config {
+	
+	//global vars
 	private String path=null;
+	//TODO path for driverfolder.
+	//TODO hashtable with driver configurations
+	private int[] defaultResolution = new int[2];
+	
 	
 	/** initialises and reads config
 	 * 
@@ -44,7 +50,9 @@ public class Config {
 	 * if excess:  ignore
 	 */
 	private void readAll(){
-		//read all properties withing a .properties file
+		//TODO write readAll()
+		
+		// read all properties withing a .properties file
 		//to private variables.
 		
 		//if excess statements. ignore (implement #ignored later)
@@ -58,6 +66,8 @@ public class Config {
 	 * @throws AccessDeniedException
 	 */
 	private void createGeneric(File file) throws AccessDeniedException{
+		//TODO write createGeneric()
+		
 		//create a .properties file in the path that is supplied.
 		//if(!file.canWrite()){throws}
 		
