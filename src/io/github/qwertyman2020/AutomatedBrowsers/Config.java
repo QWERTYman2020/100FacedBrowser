@@ -9,11 +9,11 @@ import java.nio.file.AccessDeniedException;
  */
 public class Config {
 	
-	//global vars
 	private String path=null;
+
 	//TODO path for driverfolder.
 	//TODO hashtable with driver configurations
-	private int[] defaultResolution = new int[2];
+	private int[] defaultBrowserResolution = new int[2];
 	
 	
 	/** initialises and reads config
