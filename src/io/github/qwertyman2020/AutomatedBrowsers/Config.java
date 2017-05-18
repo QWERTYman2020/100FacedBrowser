@@ -5,7 +5,7 @@ import java.nio.file.AccessDeniedException;
 
 /** config.properties reader
  * 
- * @author Bart Terpstra
+ * @author QWERTYman2020
  */
 public class Config {
 	
