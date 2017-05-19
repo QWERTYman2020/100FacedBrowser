@@ -73,7 +73,7 @@ public class mainGUI extends JFrame implements Runnable {
 		mgcDevBtn.setBounds(317, 14, 117, 248);
 		mgcDevBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				switchButton();
+				switchButton(mgcDevBtn);
 				ExampleWorker worker = new ExampleWorker(window);
 			    worker.execute();
 			}
@@ -153,7 +153,12 @@ public class mainGUI extends JFrame implements Runnable {
 		  this.status = status;
 	}
 
-	public void switchButton(){
+	public void switchButton(JButton btn){
+		btn.setEnabled(!btn.isEnabled());
+	}
+	
+	//REMOVE WHEN MAGIC DEV BUTON GOES
+	public void switchMagicDevButton(){
 		mgcDevBtn.setEnabled(!mgcDevBtn.isEnabled());
 	}
 

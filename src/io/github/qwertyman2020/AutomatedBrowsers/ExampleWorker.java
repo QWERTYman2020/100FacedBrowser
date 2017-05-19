@@ -45,7 +45,7 @@ public class ExampleWorker extends SwingWorker<Void,Status> {
 	//triggers when thread is closed/terminated
 	@Override
 	protected void done() {
-		window.switchButton();
+		window.switchMagicDevButton();
 		super.done();
 	}
 };
