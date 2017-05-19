@@ -31,7 +31,7 @@ public class mainGUI extends JFrame implements Runnable {
 
 	
 	/**
-	 * Launch the application.
+	 * Launch the application. 
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -73,7 +73,7 @@ public class mainGUI extends JFrame implements Runnable {
 		mgcDevBtn.setBounds(317, 14, 117, 248);
 		mgcDevBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				window.switchButton();
+				switchButton();
 				ExampleWorker worker = new ExampleWorker(window);
 			    worker.execute();
 			}
@@ -161,6 +161,6 @@ public class mainGUI extends JFrame implements Runnable {
 	public void run() {
 		// TODO Auto-generated method stub
 		//i forgot why this was here.
-		//i think it is required by "implements jframe"
+		//i think it is required by "runnable"
 	}
 }
