@@ -1,19 +1,22 @@
 package io.github.qwertyman2020.AutomatedBrowsers;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.AccessDeniedException;
+import java.util.Optional;
+import java.util.Properties;
 
 /** config.properties reader
  * 
- * @author QWERTYman2020
+ * @author Bart Terpstra
  */
 public class Config {
 	
 	private String path=null;
-
-	//TODO path for driverfolder.
-	//TODO hashtable with driver configurations
-	private int[] defaultBrowserResolution = new int[2];
+	private Properties prop =null;
+	private final static String PathToConfig = "config.properties";
 	
 	
 	/** initialises and reads config
@@ -46,18 +49,42 @@ public class Config {
 	/** read as much from file as possible
 	 * 
 	 * attempts to read as much from .properties file as possible.
-	 * if missing: use generics and write to end of file.
+	 * if missing: use generics or $absent.
 	 * if excess:  ignore
 	 */
 	private void readAll(){
-		//TODO write readAll()
 		
-		// read all properties withing a .properties file
-		//to private variables.
-		
-		//if excess statements. ignore (implement #ignored later)
-		//if missing, throw warning and use generic.
-		//returns succes.
+
+		prop = new Properties();
+		InputStream input = null;
+
+		try {
+
+			input = new FileInputStream(PathToConfig);
+
+			// load a properties file
+			prop.load(input);
+
+			//mandatory driverfolder check
+			File TempFolder =new File(prop.getProperty("DriverFolder"));
+			if(!TempFolder.isDirectory() || !TempFolder.canRead()) {
+				//TODO halt, warning, close on "ok"
+			}
+
+			//other mandatory property checks go here.
+			
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
 	}
 	
 	/** creates a generic .properties file in given path
@@ -68,8 +95,18 @@ public class Config {
 	private void createGeneric(File file) throws AccessDeniedException{
 		//TODO write createGeneric()
 		
+		//figure out platform
 		//create a .properties file in the path that is supplied.
 		//if(!file.canWrite()){throws}
 		
+	}
+	
+	/**gets value from properties based on key
+	*
+	*@param key of the property value you want.
+	*@return the value wrapped in an "Optional"
+	*/
+	public Optional<String> getProperty(String key){		
+		return Optional.ofNullable(prop.getProperty(key)) ;		
 	}
 }
