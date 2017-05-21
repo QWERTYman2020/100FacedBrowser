@@ -39,7 +39,7 @@ public class mainGUI extends JFrame implements Runnable {
 	private JTextField textField;
 	private Config mainCFG;
 	private HashMap<DriverType,String> pathMap;
-	private HashMap<DriverType, WebDriver> driverMap;
+	private HashMap<DriverType, WebDriver> driverMap = new HashMap<DriverType, WebDriver>();
 	
 	/**
 	 * Launch the application. 
@@ -130,6 +130,12 @@ public class mainGUI extends JFrame implements Runnable {
 		txtHttpsgogoduckcom.setColumns(10);
 		
 		JButton btnNewButton = new JButton("Go");
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				//TODO create workerthreads which do this action
+			}
+		});
 		btnNewButton.setBounds(268, 34, 51, 23);
 		frame.getContentPane().add(btnNewButton);
 		
@@ -188,8 +194,28 @@ public class mainGUI extends JFrame implements Runnable {
 		btnNewButton_4.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				//TODO spinup the browsers as speicified by dropdown
-				DriverFactory.createWebDriver(DriverType.convertFromString(comboBox_2.getSelectedItem().toString()),pathMap.get(DriverType.convertFromString(comboBox_2.getSelectedItem().toString())));
+				//TODO make spinup using workerthreads NOTE: this is pure polish.
+				DriverType currentlySelected = DriverType.convertFromString(comboBox_2.getSelectedItem().toString());
+				if(!driverMap.containsKey(currentlySelected)){
+					if(!currentlySelected.equals(DriverType.All)){
+						driverMap.put(currentlySelected, DriverFactory.createWebDriver(currentlySelected,pathMap.get(currentlySelected)));
+					}else{
+					    Iterator it = pathMap.entrySet().iterator();
+					    while (it.hasNext()) {
+					        HashMap.Entry pair = (HashMap.Entry)it.next();
+					        try{
+					        	DriverType newKey = DriverType.convertFromString(pair.getKey().toString());
+								driverMap.put(newKey, DriverFactory.createWebDriver(newKey,pathMap.get(newKey)));
+					        }catch(RuntimeException e){
+								System.out.println(e.toString());
+								e.printStackTrace();
+							}
+					        //it.remove(); 
+					    }
+					}
+				}else{
+					//TODO popup that the program thinks there is one already or has been interfened with manually.
+				}
 			}
 		});
 		btnNewButton_4.setBounds(230, 230, 77, 21);

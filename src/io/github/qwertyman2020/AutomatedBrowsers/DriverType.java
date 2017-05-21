@@ -17,6 +17,7 @@ public enum DriverType {
 		case "Opera64": return DriverType.Opera64;	
 		case "IE32": return DriverType.IE32;	
 		case "IE64": return DriverType.IE64;	
+		case "All": return DriverType.All;
 		default: throw new RuntimeException("string \""+string+ "\" found is not a valid drivertype.");
 		}
 	}

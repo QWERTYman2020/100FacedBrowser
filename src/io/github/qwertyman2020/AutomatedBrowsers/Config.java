@@ -131,8 +131,7 @@ public class Config {
 			throw new RuntimeException("Driver Config was empty.");
 		}
 		//TODO iterate to make sure each key has a value associated with it.
-		//TODO make sure all paths are valid and executable
-		//TODO string > enum
+		//TODO make sure all paths are valid and executable0
 		return result.toPathHashMap(driverFolderPath);
 	}
 	
