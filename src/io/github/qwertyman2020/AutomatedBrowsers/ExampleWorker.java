@@ -8,8 +8,8 @@ public class ExampleWorker extends SwingWorker<Void,Status> {
 
 	//private static final String propertiesPath ="config.properties";
 	private mainGUI window;
-	public ExampleWorker(mainGUI nwindow){
-		window=nwindow;
+	public ExampleWorker(mainGUI window){
+		this.window=window;
 	}
 
 	@Override
@@ -45,7 +45,6 @@ public class ExampleWorker extends SwingWorker<Void,Status> {
 	//triggers when thread is closed/terminated
 	@Override
 	protected void done() {
-		window.switchMagicDevButton();
 		super.done();
 	}
 };

@@ -8,15 +8,25 @@ import javax.swing.JProgressBar;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 
+import org.openqa.selenium.WebDriver;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.InvalidPathException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
+import javax.swing.JScrollBar;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
 
 public class mainGUI extends JFrame implements Runnable {
 
@@ -24,11 +34,12 @@ public class mainGUI extends JFrame implements Runnable {
 	public JFrame frame;
 	private JProgressBar progressBar;
 	private static mainGUI  window;
-	private JButton mgcDevBtn;
 	private volatile Status status;
-	private JTextField txtHttpsgogoduckcom;
+	private JTextField txtHttpsgogoduckcom; //TODO refactor this name.
 	private JTextField textField;
-
+	private Config mainCFG;
+	private HashMap<DriverType,String> pathMap;
+	private HashMap<DriverType, WebDriver> driverMap;
 	
 	/**
 	 * Launch the application. 
@@ -50,6 +61,38 @@ public class mainGUI extends JFrame implements Runnable {
 	 * Create the application.
 	 */
 	public mainGUI() {
+		
+		//read config.properties
+		mainCFG = new Config(Config.GenericPathToConfig);
+		try {
+			mainCFG.readAll();
+			System.out.println("main config created succesfully");
+			System.out.println(mainCFG.getProperty("DriverFolder").orElse("but property was empty?"));
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			System.out.print("caught AccessDeniedException (check permissions of main config file)");
+			System.out.println(e.toString());
+			e.printStackTrace();
+		}
+		try{
+			pathMap = mainCFG.getDriverPathHashMap();
+			System.out.println("pathMap: "+ mainCFG.toString());
+			//check if all drivers exist and can be executed.
+			//remove from list if not.
+		    Iterator it = pathMap.entrySet().iterator();
+		    while (it.hasNext()) {
+		        HashMap.Entry pair = (HashMap.Entry)it.next();
+		        //TODO verification code
+		        //it.remove(); 
+		    }
+			//TODO check if all drivers exist and are executable
+		}catch(Exception e){
+			System.out.println("getDriverFolderHashMap is broken");
+			System.out.println(e.toString());
+			e.printStackTrace();
+			//TODO disable all buttons on init, create popup
+		}
+		
 		initialize();
 	}
 
@@ -58,7 +101,7 @@ public class mainGUI extends JFrame implements Runnable {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 337, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("program");
 		frame.getContentPane().setLayout(null);
@@ -66,19 +109,8 @@ public class mainGUI extends JFrame implements Runnable {
 		progressBar = new JProgressBar();
 		progressBar.setLocation(0, 0);
 		progressBar.setAlignmentX(Component.LEFT_ALIGNMENT);
-		progressBar.setSize(new Dimension(434, 14));
+		progressBar.setSize(new Dimension(319, 14));
 		frame.getContentPane().add(progressBar);
-		
-		mgcDevBtn = new JButton("Magic Dev Button");
-		mgcDevBtn.setBounds(317, 14, 117, 248);
-		mgcDevBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				switchButton(mgcDevBtn);
-				ExampleWorker worker = new ExampleWorker(window);
-			    worker.execute();
-			}
-		});
-		frame.getContentPane().add(mgcDevBtn);
 		
 		JButton btnNewButton_1 = new JButton("<");
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -102,12 +134,16 @@ public class mainGUI extends JFrame implements Runnable {
 		frame.getContentPane().add(btnNewButton);
 		
 		JComboBox comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"all", "chrome only", "opera only", "firefox only"}));
-		comboBox.setBounds(230, 71, 77, 20);
+		//System.out.println(pathMap.toString());
+		comboBox.setModel(new DefaultComboBoxModel(new DriverType[] {DriverType.All}));
+		for(Object t:pathMap.keySet().toArray()){
+			comboBox.addItem(t);
+		}
+		comboBox.setBounds(230, 76, 77, 20);
 		frame.getContentPane().add(comboBox);
 		
-		JLabel lblNewLabel = new JLabel("Control:");
-		lblNewLabel.setBounds(174, 74, 46, 14);
+		JLabel lblNewLabel = new JLabel("Control");
+		lblNewLabel.setBounds(174, 79, 46, 14);
 		frame.getContentPane().add(lblNewLabel);
 		
 		textField = new JTextField();
@@ -136,9 +172,28 @@ public class mainGUI extends JFrame implements Runnable {
 		btnNewButton_3.setBounds(77, 137, 51, 23);
 		frame.getContentPane().add(btnNewButton_3);
 		
-		JLabel lblNewLabel_3 = new JLabel("<insert \"load script\" interface wich can load a kind of script file.>");
-		lblNewLabel_3.setBounds(0, 198, 307, 41);
+		JComboBox comboBox_2 = new JComboBox();
+		comboBox_2.setModel(new DefaultComboBoxModel(new DriverType[] {DriverType.All}));
+		for(Object t:pathMap.keySet().toArray()){
+			comboBox_2.addItem(t);
+		}
+		comboBox_2.setBounds(143, 230, 86, 20);
+		frame.getContentPane().add(comboBox_2);
+		
+		JLabel lblNewLabel_3 = new JLabel("Available browsers");
+		lblNewLabel_3.setBounds(10, 233, 118, 14);
 		frame.getContentPane().add(lblNewLabel_3);
+		
+		JButton btnNewButton_4 = new JButton("SpinUp");
+		btnNewButton_4.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				//TODO spinup the browsers as speicified by dropdown
+				DriverFactory.createWebDriver(DriverType.convertFromString(comboBox_2.getSelectedItem().toString()),pathMap.get(DriverType.convertFromString(comboBox_2.getSelectedItem().toString())));
+			}
+		});
+		btnNewButton_4.setBounds(230, 230, 77, 21);
+		frame.getContentPane().add(btnNewButton_4);
 	}
 	
 	public void updateGUI(Status status){
@@ -155,11 +210,6 @@ public class mainGUI extends JFrame implements Runnable {
 
 	public void switchButton(JButton btn){
 		btn.setEnabled(!btn.isEnabled());
-	}
-	
-	//REMOVE WHEN MAGIC DEV BUTON GOES
-	public void switchMagicDevButton(){
-		mgcDevBtn.setEnabled(!mgcDevBtn.isEnabled());
 	}
 
 	@Override

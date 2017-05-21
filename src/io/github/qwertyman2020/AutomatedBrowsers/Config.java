@@ -5,6 +5,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.AccessDeniedException;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -16,7 +21,8 @@ public class Config {
 	
 	private String path=null;
 	private Properties prop =null;
-	private final static String PathToConfig = "config.properties";
+	private final static String DriverConfigName = "driver.properties";
+	public final static String GenericPathToConfig = "settings.properties";
 	
 	
 	/** initialises and reads config
@@ -27,51 +33,35 @@ public class Config {
 	 * reads the .properties file
 	 * 
 	 * @param path
-	 * @throws AccessDeniedException
 	 */
-	public Config(String path) throws AccessDeniedException{
+	public Config(String path){
 		this.path = path;
-		
-		File file = new File(this.path);
-		if(!file.isDirectory()){
-			file = new File("config.properties");
-			this.path = "config.properties";
-		}
-		if(!file.exists()){
-			createGeneric(file);
-		}
-		if(!file.canRead()){
-			throw new AccessDeniedException(file.getPath(),"","read access denied");
-		}
-		readAll();
 	}
 	
-	/** read as much from file as possible
+	/** read as many key values as possible
 	 * 
 	 * attempts to read as much from .properties file as possible.
-	 * if missing: use generics or $absent.
-	 * if excess:  ignore
 	 */
-	private void readAll(){
-		
+	public void readAll() throws AccessDeniedException{
+		File file = new File(this.path);
+		if(!file.exists()){
+			throw new InvalidPathException("A config file","a config file does not exist.");
+		}
+		if(!file.canRead()){
+			throw new AccessDeniedException(file.getPath(),"","can't read a config file file.");
+		}
 
 		prop = new Properties();
 		InputStream input = null;
 
 		try {
 
-			input = new FileInputStream(PathToConfig);
+			input = new FileInputStream(this.path);
 
 			// load a properties file
 			prop.load(input);
+		
 
-			//mandatory driverfolder check
-			File TempFolder =new File(prop.getProperty("DriverFolder"));
-			if(!TempFolder.isDirectory() || !TempFolder.canRead()) {
-				//TODO halt, warning, close on "ok"
-			}
-
-			//other mandatory property checks go here.
 			
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -87,19 +77,33 @@ public class Config {
 
 	}
 	
+	
+	
+	
 	/** creates a generic .properties file in given path
+	 * 
+	 * @param String to path
+	 * @throws AccessDeniedException
+	 */
+	public void createGenericMainConfig(String Path) throws AccessDeniedException{
+		//TODO write createGenericMain()
+		
+		//create a .properties file in the path that is supplied.
+		//if(!file.canWrite()){throws}
+	}
+	
+	/** creates a generic .properties file for Drivers
 	 * 
 	 * @param file
 	 * @throws AccessDeniedException
 	 */
-	private void createGeneric(File file) throws AccessDeniedException{
-		//TODO write createGeneric()
+	public void createGenericDriverConfig(String Path) throws AccessDeniedException{
+		//TODO write createGenericMain()
 		
-		//figure out platform
 		//create a .properties file in the path that is supplied.
 		//if(!file.canWrite()){throws}
-		
 	}
+	
 	
 	/**gets value from properties based on key
 	*
@@ -108,5 +112,52 @@ public class Config {
 	*/
 	public Optional<String> getProperty(String key){		
 		return Optional.ofNullable(prop.getProperty(key)) ;		
+	}
+	
+	public HashMap<DriverType,String> getDriverPathHashMap() throws InvalidPathException, RuntimeException, AccessDeniedException {
+		
+		//check if DriverFolder is safe
+		String driverFolderPath = this.getProperty("DriverFolder").orElseThrow(() -> new RuntimeException("no \"DriverFolder\" path in confguration file."));
+		File file = new File(driverFolderPath);
+		if(!file.isDirectory() || !file.exists()){
+			throw new InvalidPathException("DriverFolder","Driver Folder path in configuration is invalid.");
+		}
+		if(!file.canRead()){
+			throw new AccessDeniedException(file.getPath(),"","Driver Folder Path had read access denied.");
+		}
+		Config result = new Config(driverFolderPath+File.separator+DriverConfigName);
+		result.readAll();
+		if(result.isEmpty()){
+			throw new RuntimeException("Driver Config was empty.");
+		}
+		//TODO iterate to make sure each key has a value associated with it.
+		//TODO make sure all paths are valid and executable
+		//TODO string > enum
+		return result.toPathHashMap(driverFolderPath);
+	}
+	
+	private HashMap<DriverType,String> toPathHashMap(String prePath){
+
+		HashMap<DriverType,String> result = new HashMap<DriverType, String>();
+		//TODO CRITICAL; iterate this.props doing DriverType.convertFromString(currKey) insert as new key into hashmap.
+	    Iterator it = prop.entrySet().iterator();
+	    while (it.hasNext()) {
+	        HashMap.Entry pair = (HashMap.Entry)it.next();
+	        try{
+	        	DriverType newKey = DriverType.convertFromString(pair.getKey().toString());
+		        result.put(newKey, prePath+File.separator+pair.getValue().toString());
+	        }catch(RuntimeException e){
+				System.out.println(e.toString());
+				e.printStackTrace();
+	        	//TODO throw warning for invalid drivertype in config
+	        }
+	        //it.remove(); 
+	    }
+	    //TODO check if toHashMap is empty. throw runtimeexception.
+		return result;
+	}
+	
+	private boolean isEmpty(){
+		return prop.isEmpty();
 	}
 }
