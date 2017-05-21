@@ -8,12 +8,15 @@ import javax.swing.JProgressBar;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 
+import org.openqa.selenium.WebDriver;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.InvalidPathException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JTextField;
@@ -35,8 +38,8 @@ public class mainGUI extends JFrame implements Runnable {
 	private JTextField txtHttpsgogoduckcom; //TODO refactor this name.
 	private JTextField textField;
 	private Config mainCFG;
-	private Config driverCFG;
-
+	private HashMap<DriverType,String> pathMap;
+	private HashMap<DriverType, WebDriver> driverMap;
 	
 	/**
 	 * Launch the application. 
@@ -60,20 +63,33 @@ public class mainGUI extends JFrame implements Runnable {
 	public mainGUI() {
 		
 		//read config.properties
+		mainCFG = new Config(Config.GenericPathToConfig);
 		try {
-			mainCFG = new Config(Config.GenericPathToConfig);
+			mainCFG.readAll();
+			System.out.println("main config created succesfully");
+			System.out.println(mainCFG.getProperty("DriverFolder").orElse("but property was empty?"));
 		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
-			System.out.print("caught AccessDeniedException (check permissions of config file): ");
+			System.out.print("caught AccessDeniedException (check permissions of main config file)");
 			System.out.println(e.toString());
 			e.printStackTrace();
 		}
 		try{
-			driverCFG = mainCFG.getDriverFolderConfig();
-			//TODO create something iterable from config for the dropdowns in INIT.
-			//check if all drivers exist and are executable
-			//give error if 0 drivers found.
+			pathMap = mainCFG.getDriverPathHashMap();
+			System.out.println("pathMap: "+ mainCFG.toString());
+			//check if all drivers exist and can be executed.
+			//remove from list if not.
+		    Iterator it = pathMap.entrySet().iterator();
+		    while (it.hasNext()) {
+		        HashMap.Entry pair = (HashMap.Entry)it.next();
+		        //TODO verification code
+		        //it.remove(); 
+		    }
+			//TODO check if all drivers exist and are executable
 		}catch(Exception e){
+			System.out.println("getDriverFolderHashMap is broken");
+			System.out.println(e.toString());
+			e.printStackTrace();
 			//TODO disable all buttons on init, create popup
 		}
 		
@@ -118,7 +134,11 @@ public class mainGUI extends JFrame implements Runnable {
 		frame.getContentPane().add(btnNewButton);
 		
 		JComboBox comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"all", "chrome only", "opera only", "firefox only"}));
+		//System.out.println(pathMap.toString());
+		comboBox.setModel(new DefaultComboBoxModel(new DriverType[] {DriverType.All}));
+		for(Object t:pathMap.keySet().toArray()){
+			comboBox.addItem(t);
+		}
 		comboBox.setBounds(230, 76, 77, 20);
 		frame.getContentPane().add(comboBox);
 		
@@ -152,24 +172,28 @@ public class mainGUI extends JFrame implements Runnable {
 		btnNewButton_3.setBounds(77, 137, 51, 23);
 		frame.getContentPane().add(btnNewButton_3);
 		
-		JButton btnNewButton_4 = new JButton("SpinUp");
-		btnNewButton_4.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				//TODO spinup the browsers as speicified by dropdown
-			}
-		});
-		btnNewButton_4.setBounds(230, 230, 77, 21);
-		frame.getContentPane().add(btnNewButton_4);
-		
 		JComboBox comboBox_2 = new JComboBox();
-		comboBox_2.setModel(new DefaultComboBoxModel(new String[] {"1 of each", "chrome only", "opera only", "firefox only"}));
+		comboBox_2.setModel(new DefaultComboBoxModel(new DriverType[] {DriverType.All}));
+		for(Object t:pathMap.keySet().toArray()){
+			comboBox_2.addItem(t);
+		}
 		comboBox_2.setBounds(143, 230, 86, 20);
 		frame.getContentPane().add(comboBox_2);
 		
 		JLabel lblNewLabel_3 = new JLabel("Available browsers");
 		lblNewLabel_3.setBounds(10, 233, 118, 14);
 		frame.getContentPane().add(lblNewLabel_3);
+		
+		JButton btnNewButton_4 = new JButton("SpinUp");
+		btnNewButton_4.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				//TODO spinup the browsers as speicified by dropdown
+				DriverFactory.createWebDriver(DriverType.convertFromString(comboBox_2.getSelectedItem().toString()),pathMap.get(DriverType.convertFromString(comboBox_2.getSelectedItem().toString())));
+			}
+		});
+		btnNewButton_4.setBounds(230, 230, 77, 21);
+		frame.getContentPane().add(btnNewButton_4);
 	}
 	
 	public void updateGUI(Status status){
