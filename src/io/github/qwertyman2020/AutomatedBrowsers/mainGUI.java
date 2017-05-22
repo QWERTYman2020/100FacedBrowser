@@ -227,24 +227,25 @@ public class mainGUI extends JFrame implements Runnable {
 			public void mouseClicked(MouseEvent arg0) {
 				//TODO make spinup using workerthreads NOTE: this is pure polish.
 				DriverType currentlySelected = DriverType.convertFromString(comboBox_2.getSelectedItem().toString());
+				
 				if(!driverMap.containsKey(currentlySelected)){
+					DriverFactory factory = new DriverFactory(mainCFG);
 					if(!currentlySelected.equals(DriverType.All)){
-						driverMap.put(currentlySelected, DriverFactory.createWebDriver(currentlySelected,pathMap.get(currentlySelected)));
+						driverMap.put(currentlySelected, factory.createWebDriver(currentlySelected,pathMap.get(currentlySelected)));
 					}else{
-					    Iterator it = pathMap.entrySet().iterator();
-					    while (it.hasNext()) {
-					        HashMap.Entry pair = (HashMap.Entry)it.next();
-					        try{
-					        	DriverType newKey = DriverType.convertFromString(pair.getKey().toString());
-								driverMap.put(newKey, DriverFactory.createWebDriver(newKey,pathMap.get(newKey)));
-					        }catch(RuntimeException e){
+						try{
+							Set<DriverType> keySet = driverMap.keySet();
+							for(DriverType t:keySet){
+								DriverType newKey = t;
+								driverMap.put(newKey, factory.createWebDriver(newKey,pathMap.get(newKey)));
+							}
+							}catch(RuntimeException e){
 								System.out.println(e.toString());
 								e.printStackTrace();
-							}
 					        //it.remove(); 
-					    }
-					}
-				}else{
+							}
+						}
+					}else{
 					//TODO popup that the program thinks there is one already or has been interfened with manually.
 				}
 			}

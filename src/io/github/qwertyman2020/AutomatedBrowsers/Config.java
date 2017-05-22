@@ -23,6 +23,8 @@ public class Config {
 	private Properties prop =null;
 	private final static String DriverConfigName = "driver.properties";
 	public final static String GenericPathToConfig = "settings.properties";
+	public static final String BrowserHeightKey = "DefaultBrowserHeight";
+	public static final String BrowserWidthKey = "DefaultBrowserWidth";
 	
 	
 	/** initialises and reads config

@@ -1,5 +1,7 @@
 package io.github.qwertyman2020.AutomatedBrowsers;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 
 import org.openqa.selenium.WebDriver;
@@ -14,7 +16,22 @@ import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class DriverFactory {
-	public static WebDriver createWebDriver(DriverType type,String path){
+	private static int screenWidth;
+	private static int screenHeight;
+	private static int browserWidth;
+	private static int browserHeight;
+
+	public DriverFactory(Config config){
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		screenWidth = gd.getDisplayMode().getWidth();
+		screenHeight = gd.getDisplayMode().getHeight();
+		browserWidth= Integer.parseInt(config.getProperty(Config.BrowserWidthKey).orElse("640"));
+		browserHeight = Integer.parseInt(config.getProperty(Config.BrowserWidthKey).orElse("360"));
+	}
+	
+	
+	public WebDriver createWebDriver(DriverType type,String path){
+		
 		switch(type){
 		case Chrome64: return createChrome(path);
 		case Chrome32: return createChrome(path);
@@ -27,9 +44,10 @@ public class DriverFactory {
 	}
 	
 	
+	
 	//TODO make createBrowser methods less generic
 
-	private static WebDriver createChrome(String path){
+	private WebDriver createChrome(String path){
 		WebDriver result;
 		
 		// configure it as a desired capability
@@ -48,7 +66,7 @@ public class DriverFactory {
 		return result;
 	}
 	
-	private static WebDriver createOpera(String path){
+	private WebDriver createOpera(String path){
 		WebDriver result;
 		
 		// configure it as a desired capability
@@ -67,7 +85,7 @@ public class DriverFactory {
 		return result;
 	}
 	
-	private static WebDriver createIE(String path){
+	private WebDriver createIE(String path){
 		WebDriver result;
 		
 		// configure it as a desired capability

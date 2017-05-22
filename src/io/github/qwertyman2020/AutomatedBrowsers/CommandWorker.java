@@ -27,11 +27,12 @@ public class CommandWorker extends SwingWorker<Void,Status> {
 		
 
 		//TODO replace system outs with a logger object.
+		/*
 		System.out.println("initial setup completed");
 		status.setTitle("initial setup completed");
 		status.setProgress(1);
 		this.publish(status); //allows data to flow from this thread to other places in the program
-		
+		*/
 		
 		switch(command.getAction()){
 			case Goto: driver.navigate().to(new URL(command.getDetails()));driver.navigate().refresh();break;
