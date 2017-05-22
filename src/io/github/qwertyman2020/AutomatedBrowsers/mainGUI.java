@@ -41,6 +41,7 @@ public class mainGUI extends JFrame implements Runnable {
 	private Config mainCFG;
 	private HashMap<DriverType,String> pathMap;
 	private HashMap<DriverType, WebDriver> driverMap = new HashMap<DriverType, WebDriver>();
+	private DriverFactory factory;
 	
 	/**
 	 * Launch the application. 
@@ -93,7 +94,7 @@ public class mainGUI extends JFrame implements Runnable {
 			e.printStackTrace();
 			//TODO disable all buttons on init, create popup
 		}
-		
+		factory = new DriverFactory(mainCFG);
 		initialize();
 	}
 
@@ -229,7 +230,6 @@ public class mainGUI extends JFrame implements Runnable {
 				DriverType currentlySelected = DriverType.convertFromString(comboBox_2.getSelectedItem().toString());
 				
 				if(!driverMap.containsKey(currentlySelected)){
-					DriverFactory factory = new DriverFactory(mainCFG);
 					if(!currentlySelected.equals(DriverType.All)){
 						driverMap.put(currentlySelected, factory.createWebDriver(currentlySelected,pathMap.get(currentlySelected)));
 					}else{
@@ -276,4 +276,5 @@ public class mainGUI extends JFrame implements Runnable {
 		//i forgot why this was here.
 		//i think it is required by "runnable"
 	}
+	//TODO on program close get rid of drivers.
 }
