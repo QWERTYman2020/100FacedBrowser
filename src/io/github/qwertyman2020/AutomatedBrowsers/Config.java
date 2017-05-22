@@ -23,6 +23,8 @@ public class Config {
 	private Properties prop =null;
 	private final static String DriverConfigName = "driver.properties";
 	public final static String GenericPathToConfig = "settings.properties";
+	public static final String BrowserHeightKey = "DefaultBrowserHeight";
+	public static final String BrowserWidthKey = "DefaultBrowserWidth";
 	
 	
 	/** initialises and reads config
@@ -138,7 +140,6 @@ public class Config {
 	private HashMap<DriverType,String> toPathHashMap(String prePath){
 
 		HashMap<DriverType,String> result = new HashMap<DriverType, String>();
-		//TODO CRITICAL; iterate this.props doing DriverType.convertFromString(currKey) insert as new key into hashmap.
 	    Iterator it = prop.entrySet().iterator();
 	    while (it.hasNext()) {
 	        HashMap.Entry pair = (HashMap.Entry)it.next();
