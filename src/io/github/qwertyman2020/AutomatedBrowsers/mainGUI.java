@@ -94,6 +94,7 @@ public class mainGUI extends JFrame implements Runnable {
 			e.printStackTrace();
 			//TODO disable all buttons on init, create popup
 		}
+		//TODO comment out for ddesigner errors
 		factory = new DriverFactory(mainCFG);
 		initialize();
 	}
@@ -128,7 +129,7 @@ public class mainGUI extends JFrame implements Runnable {
 			}
 		});
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnNewButton_1.setBounds(10, 25, 40, 40);
+		btnNewButton_1.setBounds(10, 25, 45, 45);
 		frame.getContentPane().add(btnNewButton_1);
 		
 		JButton btnNewButton_2 = new JButton(">");
@@ -145,7 +146,7 @@ public class mainGUI extends JFrame implements Runnable {
 			}
 		});
 		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnNewButton_2.setBounds(60, 25, 40, 40);
+		btnNewButton_2.setBounds(65, 25, 45, 45);
 		frame.getContentPane().add(btnNewButton_2);
 		
 		adressField = new JTextField();
