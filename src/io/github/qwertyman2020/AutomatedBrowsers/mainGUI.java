@@ -17,6 +17,7 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.InvalidPathException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JTextField;
@@ -35,7 +36,7 @@ public class mainGUI extends JFrame implements Runnable {
 	private JProgressBar progressBar;
 	private static mainGUI  window;
 	private volatile Status status;
-	private JTextField txtHttpsgogoduckcom; //TODO refactor this name.
+	private JTextField adressField; //TODO refactor this name.
 	private JTextField textField;
 	private Config mainCFG;
 	private HashMap<DriverType,String> pathMap;
@@ -101,7 +102,7 @@ public class mainGUI extends JFrame implements Runnable {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 337, 300);
+		frame.setBounds(100, 100, 451, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("program");
 		frame.getContentPane().setLayout(null);
@@ -109,34 +110,64 @@ public class mainGUI extends JFrame implements Runnable {
 		progressBar = new JProgressBar();
 		progressBar.setLocation(0, 0);
 		progressBar.setAlignmentX(Component.LEFT_ALIGNMENT);
-		progressBar.setSize(new Dimension(319, 14));
+		progressBar.setSize(new Dimension(425, 14));
 		frame.getContentPane().add(progressBar);
 		
 		JButton btnNewButton_1 = new JButton("<");
+		btnNewButton_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//PREVIOUS
+				Set<DriverType> keySet = driverMap.keySet();
+				for(DriverType t:keySet){
+					Command toExecute = new Command(Action.Previous);
+					CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);		    
+					worker.execute();
+				}
+			}
+		});
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		btnNewButton_1.setBounds(10, 25, 40, 40);
 		frame.getContentPane().add(btnNewButton_1);
 		
 		JButton btnNewButton_2 = new JButton(">");
+		btnNewButton_2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//NEXT
+				Set<DriverType> keySet = driverMap.keySet();
+				for(DriverType t:keySet){
+					Command toExecute = new Command(Action.Next);
+					CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);		    
+					worker.execute();
+				}
+			}
+		});
 		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnNewButton_2.setBounds(52, 25, 40, 40);
+		btnNewButton_2.setBounds(60, 25, 40, 40);
 		frame.getContentPane().add(btnNewButton_2);
 		
-		txtHttpsgogoduckcom = new JTextField();
-		txtHttpsgogoduckcom.setText("https://gogoduck.com");
-		txtHttpsgogoduckcom.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		txtHttpsgogoduckcom.setBounds(102, 31, 156, 29);
-		frame.getContentPane().add(txtHttpsgogoduckcom);
-		txtHttpsgogoduckcom.setColumns(10);
+		adressField = new JTextField();
+		adressField .setText("https://gogoduck.com");
+		adressField .setFont(new Font("Tahoma", Font.PLAIN, 11));
+		adressField .setBounds(116, 31, 231, 29);
+		frame.getContentPane().add(adressField );
+		adressField .setColumns(10);
 		
 		JButton btnNewButton = new JButton("Go");
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				//TODO create workerthreads which do this action
+				//Goto
+				Set<DriverType> keySet = driverMap.keySet();
+				for(DriverType t:keySet){
+					Command toExecute = new Command(Action.Goto,adressField.getText());
+					CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);
+					worker.execute();
+				}
 			}
 		});
-		btnNewButton.setBounds(268, 34, 51, 23);
+		btnNewButton.setBounds(374, 34, 51, 23);
 		frame.getContentPane().add(btnNewButton);
 		
 		JComboBox comboBox = new JComboBox();

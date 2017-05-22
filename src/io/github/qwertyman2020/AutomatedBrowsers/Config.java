@@ -138,7 +138,6 @@ public class Config {
 	private HashMap<DriverType,String> toPathHashMap(String prePath){
 
 		HashMap<DriverType,String> result = new HashMap<DriverType, String>();
-		//TODO CRITICAL; iterate this.props doing DriverType.convertFromString(currKey) insert as new key into hashmap.
 	    Iterator it = prop.entrySet().iterator();
 	    while (it.hasNext()) {
 	        HashMap.Entry pair = (HashMap.Entry)it.next();
