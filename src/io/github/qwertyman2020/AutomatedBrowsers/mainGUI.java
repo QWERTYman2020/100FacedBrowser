@@ -15,9 +15,12 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.InvalidPathException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JTextField;
@@ -28,6 +31,8 @@ import javax.swing.JScrollBar;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class mainGUI extends JFrame implements Runnable {
 
@@ -104,6 +109,17 @@ public class mainGUI extends JFrame implements Runnable {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+			Set<DriverType> drivers = driverMap.keySet();
+				for(DriverType t:drivers){
+					Command toExecute = new Command(Action.Quit);
+					CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);		    
+					worker.execute();
+				}
+			}
+		});
 		frame.setBounds(100, 100, 451, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("program");
@@ -235,15 +251,15 @@ public class mainGUI extends JFrame implements Runnable {
 						driverMap.put(currentlySelected, factory.createWebDriver(currentlySelected,pathMap.get(currentlySelected)));
 					}else{
 						try{
-							Set<DriverType> keySet = driverMap.keySet();
+							Set<DriverType> keySet = pathMap.keySet();
 							for(DriverType t:keySet){
-								DriverType newKey = t;
-								driverMap.put(newKey, factory.createWebDriver(newKey,pathMap.get(newKey)));
+								System.out.println("trying drivermap.put "+t.toString());
+								driverMap.put(t, factory.createWebDriver(t,pathMap.get(t).toString()));
 							}
-							}catch(RuntimeException e){
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
 								System.out.println(e.toString());
 								e.printStackTrace();
-					        //it.remove(); 
 							}
 						}
 					}else{

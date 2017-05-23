@@ -101,9 +101,10 @@ public class DriverFactory {
 	private WebDriver createIE(String path){
 		WebDriver result;
 		
-		// configure it as a desired capability
-		//InternetexplorerOptions options = new ChromeOptions();
-		//options.addArguments("--window-position=9000,9000");// try to place window out of view of user
+		// issues that can cause creation fail:
+		// IE does not have same security settings for each zone.
+		// you tried cookie maniplation (this is not allowed for IE)
+		// zoom level needs to be 100%
 
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		//capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);             
