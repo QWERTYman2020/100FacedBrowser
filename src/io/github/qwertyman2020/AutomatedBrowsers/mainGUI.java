@@ -14,13 +14,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.nio.file.AccessDeniedException;
-import java.nio.file.InvalidPathException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JTextField;
@@ -188,11 +184,11 @@ public class mainGUI extends JFrame implements Runnable {
 		btnNewButton.setBounds(374, 34, 51, 23);
 		frame.getContentPane().add(btnNewButton);
 		
-		JComboBox comboBox = new JComboBox();
+		JComboBox<DriverType> comboBox = new JComboBox<DriverType>();
 		//System.out.println(pathMap.toString());
-		comboBox.setModel(new DefaultComboBoxModel(new DriverType[] {DriverType.All}));
+		comboBox.setModel(new DefaultComboBoxModel<DriverType>(new DriverType[] {DriverType.All}));
 		for(Object t:pathMap.keySet().toArray()){
-			comboBox.addItem(t);
+			comboBox.addItem((DriverType) t);
 		}
 		comboBox.setBounds(230, 76, 77, 20);
 		frame.getContentPane().add(comboBox);
@@ -210,6 +206,8 @@ public class mainGUI extends JFrame implements Runnable {
 		lblNewLabel_1.setBounds(4, 79, 64, 14);
 		frame.getContentPane().add(lblNewLabel_1);
 		
+		
+		//TODO change to Action enum
 		JComboBox comboBox_1 = new JComboBox();
 		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"leftclick", "select", "focus", "rightclick", "type"}));
 		comboBox_1.setBounds(78, 107, 86, 20);
@@ -227,10 +225,10 @@ public class mainGUI extends JFrame implements Runnable {
 		btnNewButton_3.setBounds(77, 137, 51, 23);
 		frame.getContentPane().add(btnNewButton_3);
 		
-		JComboBox comboBox_2 = new JComboBox();
-		comboBox_2.setModel(new DefaultComboBoxModel(new DriverType[] {DriverType.All}));
+		JComboBox<DriverType> comboBox_2 = new JComboBox<DriverType>();
+		comboBox_2.setModel(new DefaultComboBoxModel<DriverType>(new DriverType[] {DriverType.All}));
 		for(Object t:pathMap.keySet().toArray()){
-			comboBox_2.addItem(t);
+			comboBox_2.addItem((DriverType) t);
 		}
 		comboBox_2.setBounds(143, 230, 86, 20);
 		frame.getContentPane().add(comboBox_2);

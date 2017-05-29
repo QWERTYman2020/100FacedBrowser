@@ -2,28 +2,24 @@ package io.github.qwertyman2020.AutomatedBrowsers;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.io.File;
+
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Window;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.ie.InternetExplorerDriverService;
 import org.openqa.selenium.opera.OperaDriver;
-import org.openqa.selenium.opera.OperaDriverService;
 import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 
 public class DriverFactory {
 	private static int screenWidth;
-	private static int screenHeight;
 	private static int browserWidth;
 	private static int browserHeight;
 	private int nextX;
@@ -32,7 +28,6 @@ public class DriverFactory {
 	public DriverFactory(Config config){
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		screenWidth = gd.getDisplayMode().getWidth();
-		screenHeight = gd.getDisplayMode().getHeight();
 		browserWidth= Integer.parseInt(config.getProperty(Config.BrowserWidthKey).orElse("640"));
 		browserHeight = Integer.parseInt(config.getProperty(Config.BrowserWidthKey).orElse("360"));
 		nextX = 0;

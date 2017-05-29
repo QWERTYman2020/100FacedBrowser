@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Optional;
@@ -140,6 +138,7 @@ public class Config {
 	private HashMap<DriverType,String> toPathHashMap(String prePath){
 
 		HashMap<DriverType,String> result = new HashMap<DriverType, String>();
+		//TODO change to new loop type
 	    Iterator it = prop.entrySet().iterator();
 	    while (it.hasNext()) {
 	        HashMap.Entry pair = (HashMap.Entry)it.next();
