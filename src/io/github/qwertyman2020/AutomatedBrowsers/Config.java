@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 /** config.properties reader
  * 
@@ -140,18 +141,15 @@ public class Config {
 	private HashMap<DriverType,String> toPathHashMap(String prePath){
 
 		HashMap<DriverType,String> result = new HashMap<DriverType, String>();
-	    Iterator it = prop.entrySet().iterator();
-	    while (it.hasNext()) {
-	        HashMap.Entry pair = (HashMap.Entry)it.next();
-	        try{
-	        	DriverType newKey = DriverType.convertFromString(pair.getKey().toString());
-		        result.put(newKey, prePath+File.separator+pair.getValue().toString());
+		Set<Object> keySet = prop.keySet();
+			for(Object t:keySet){	        
+				try{
+		        result.put(DriverType.convertFromString((String) t), prePath+File.separator+prop.getProperty((String) t));
 	        }catch(RuntimeException e){
 				System.out.println(e.toString());
 				e.printStackTrace();
 	        	//TODO throw warning for invalid drivertype in config
 	        }
-	        //it.remove(); 
 	    }
 	    //TODO check if toHashMap is empty. throw runtimeexception.
 		return result;
