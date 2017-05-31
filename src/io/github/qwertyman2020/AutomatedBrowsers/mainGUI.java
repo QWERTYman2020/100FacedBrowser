@@ -108,12 +108,7 @@ public class mainGUI extends JFrame implements Runnable {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-			Set<DriverType> drivers = driverMap.keySet();
-				for(DriverType t:drivers){
-					Command toExecute = new Command(Action.Quit);
-					CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);		    
-					worker.execute();
-				}
+				cleanupDrivers(driverMap);
 			}
 		});
 		frame.setBounds(100, 100, 451, 300);
@@ -285,11 +280,18 @@ public class mainGUI extends JFrame implements Runnable {
 		btn.setEnabled(!btn.isEnabled());
 	}
 
+	public static void cleanupDrivers(Map<DriverType,WebDriver> map){
+		Set<DriverType> drivers = map.keySet();
+		for(DriverType t:drivers){
+			Command toExecute = new Command(Action.Quit);
+			CommandWorker worker = new CommandWorker(window,map.get(t),toExecute);		    
+			worker.execute();
+		}
+	}
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		//i forgot why this was here.
 		//i think it is required by "runnable"
 	}
-	//TODO on program close get rid of drivers.
 }
