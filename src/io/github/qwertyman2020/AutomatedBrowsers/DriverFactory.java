@@ -125,7 +125,7 @@ public class DriverFactory {
 		//capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);             
 		
 		capabilities.setCapability(FirefoxOptions.FIREFOX_OPTIONS, options);
-		System.out.println("building Firefox driver with paath: "+path);
+		System.out.println("building Firefox driver with path: "+path);
     	System.setProperty("webdriver.gecko.driver",path);
 		result = new FirefoxDriver(capabilities);
 		

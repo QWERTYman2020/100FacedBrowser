@@ -35,7 +35,7 @@ public class CommandWorker extends SwingWorker<Void,Status> {
 		*/
 		
 		switch(command.getAction()){
-			case Goto: driver.navigate().to(new URL(command.getDetails()));driver.navigate().refresh();break;
+			case Goto: driver.navigate().to(new URL(command.getDetails()));break;
 			case Previous: driver.navigate().back();break;
 			case Next: driver.navigate().forward();break;
 			case Quit: driver.quit();break;

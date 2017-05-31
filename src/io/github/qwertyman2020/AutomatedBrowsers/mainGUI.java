@@ -158,7 +158,7 @@ public class mainGUI extends JFrame implements Runnable {
 		frame.getContentPane().add(btnNewButton_2);
 		
 		adressField = new JTextField();
-		adressField .setText("https://gogoduck.com");
+		adressField .setText("https://duckduckgo.com");
 		adressField .setFont(new Font("Tahoma", Font.PLAIN, 11));
 		adressField .setBounds(116, 31, 231, 29);
 		frame.getContentPane().add(adressField );
