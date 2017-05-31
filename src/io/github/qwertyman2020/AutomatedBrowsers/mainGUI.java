@@ -10,6 +10,8 @@ import javax.swing.SwingUtilities;
 
 import org.openqa.selenium.WebDriver;
 
+import javafx.scene.input.KeyCode;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
@@ -30,6 +32,8 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class mainGUI extends JFrame implements Runnable {
 
@@ -83,12 +87,10 @@ public class mainGUI extends JFrame implements Runnable {
 			System.out.println("pathMap: "+ mainCFG.toString());
 			//check if all drivers exist and can be executed.
 			//remove from list if not.
-		    Iterator it = pathMap.entrySet().iterator();
-		    while (it.hasNext()) {
-		        HashMap.Entry pair = (HashMap.Entry)it.next();
+			Set<DriverType> keySet = pathMap.keySet();
+			for(DriverType t:keySet){
 		        //TODO verification code
-		        //it.remove(); 
-		    }
+			}
 			//TODO check if all drivers exist and are executable
 		}catch(Exception e){
 			System.out.println("getDriverFolderHashMap is broken");
@@ -158,27 +160,24 @@ public class mainGUI extends JFrame implements Runnable {
 		frame.getContentPane().add(btnNewButton_2);
 		
 		adressField = new JTextField();
+		adressField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent key) {
+				if(key.getKeyCode()==KeyEvent.VK_ENTER){
+					Set<DriverType> keySet = driverMap.keySet();
+					for(DriverType t:keySet){
+						Command toExecute = new Command(Action.Goto,adressField.getText());
+						CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);
+						worker.execute();
+					}
+				}
+			}
+		});
 		adressField .setText("https://duckduckgo.com");
 		adressField .setFont(new Font("Tahoma", Font.PLAIN, 11));
 		adressField .setBounds(116, 31, 231, 29);
 		frame.getContentPane().add(adressField );
 		adressField .setColumns(10);
-		
-		JButton btnNewButton = new JButton("Go");
-		btnNewButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				//Goto
-				Set<DriverType> keySet = driverMap.keySet();
-				for(DriverType t:keySet){
-					Command toExecute = new Command(Action.Goto,adressField.getText());
-					CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);
-					worker.execute();
-				}
-			}
-		});
-		btnNewButton.setBounds(374, 34, 51, 23);
-		frame.getContentPane().add(btnNewButton);
 		
 		JComboBox<DriverType> comboBox = new JComboBox<DriverType>();
 		//System.out.println(pathMap.toString());
