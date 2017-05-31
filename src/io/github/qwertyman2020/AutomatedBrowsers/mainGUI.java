@@ -244,15 +244,22 @@ public class mainGUI extends JFrame implements Runnable {
 						driverMap.put(currentlySelected, factory.createWebDriver(currentlySelected,pathMap.get(currentlySelected)));
 					}else{
 						try{
+							//TODO make sure driver wasnt previously created
+							switchButton(btnNewButton_4);
 							Set<DriverType> keySet = pathMap.keySet();
 							for(DriverType t:keySet){
-								System.out.println("trying drivermap.put "+t.toString());
-								driverMap.put(t, factory.createWebDriver(t,pathMap.get(t).toString()));
+								//System.out.println("trying drivermap.put "+t.toString());
+								//driverMap.put(t, factory.createWebDriver(t,pathMap.get(t).toString()));
+								//TODO catch failed creation
+								CreationWorker worker = new CreationWorker(factory,t,pathMap.get(t),window);
+								worker.execute();
 							}
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								System.out.println(e.toString());
 								e.printStackTrace();
+							}finally{
+								switchButton(btnNewButton_4);
 							}
 						}
 					}else{
@@ -288,6 +295,10 @@ public class mainGUI extends JFrame implements Runnable {
 			worker.execute();
 		}
 	}
+	public void putDriver(DriverType key,WebDriver driver){
+		driverMap.put(key,driver);
+	}
+	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
