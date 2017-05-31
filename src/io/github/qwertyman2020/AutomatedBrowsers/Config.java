@@ -8,6 +8,7 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.InvalidPathException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -132,7 +133,8 @@ public class Config {
 			throw new RuntimeException("Driver Config was empty.");
 		}
 		//TODO iterate to make sure each key has a value associated with it.
-		//TODO make sure all paths are valid and executable0
+		//TODO make sure all paths are valid and executable
+		
 		return result.toPathHashMap(driverFolderPath);
 	}
 	
@@ -142,18 +144,28 @@ public class Config {
 		Set<Object> keySet = prop.keySet();
 			for(Object t:keySet){	        
 				try{
-		        result.put(DriverType.convertFromString((String) t), prePath+File.separator+prop.getProperty((String) t));
-	        }catch(RuntimeException e){
-				System.out.println(e.toString());
-				e.printStackTrace();
+					if(new File(prePath+File.separator+prop.getProperty((String) t)).canExecute()){
+						result.put(DriverType.convertFromString((String) t), prePath+File.separator+prop.getProperty((String) t));
+					}
+				}catch(RuntimeException e){
+					System.out.println(e.toString());
+					e.printStackTrace();
 	        	//TODO throw warning for invalid drivertype in config
 	        }
 	    }
-	    //TODO check if toHashMap is empty. throw runtimeexception.
-		return result;
+		if(!result.isEmpty()){
+			return result;
+		}else{
+			throw new RuntimeException("no paths inside driver.properties are executable or exist.");
+			//TODO throw a fitting error
+		}
 	}
 	
 	private boolean isEmpty(){
 		return prop.isEmpty();
+	}
+	
+	private Properties getProperties(){
+		return this.prop;
 	}
 }
