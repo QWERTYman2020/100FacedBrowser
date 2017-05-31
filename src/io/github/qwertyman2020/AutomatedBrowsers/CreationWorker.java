@@ -1,7 +1,5 @@
 package io.github.qwertyman2020.AutomatedBrowsers;
 
-import java.net.URL;
-import java.util.List;
 
 import javax.swing.SwingWorker;
 

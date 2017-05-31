@@ -2,25 +2,24 @@ package io.github.qwertyman2020.AutomatedBrowsers;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.io.File;
+
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Window;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.ie.InternetExplorerDriverService;
 import org.openqa.selenium.opera.OperaDriver;
-import org.openqa.selenium.opera.OperaDriverService;
 import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+
 public class DriverFactory {
 	private static int screenWidth;
-	private static int screenHeight;
 	private static int browserWidth;
 	private static int browserHeight;
 	private int nextX;
@@ -29,7 +28,6 @@ public class DriverFactory {
 	public DriverFactory(Config config){
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		screenWidth = gd.getDisplayMode().getWidth();
-		screenHeight = gd.getDisplayMode().getHeight();
 		browserWidth= Integer.parseInt(config.getProperty(Config.BrowserWidthKey).orElse("640"));
 		browserHeight = Integer.parseInt(config.getProperty(Config.BrowserWidthKey).orElse("360"));
 		nextX = 0;
@@ -46,6 +44,8 @@ public class DriverFactory {
 		case Opera32: return createOpera(path);
 		case IE64: return createIE(path);
 		case IE32: return createIE(path);
+		case Firefox64: return createFirefox(path);
+		case Firefox32: return createFirefox(path);
 		default: throw new RuntimeException(type.toString()+" was not a valid drivertype, this should be impossible");
 		}
 	}
@@ -66,10 +66,8 @@ public class DriverFactory {
 		capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 		
 		System.out.println("building chrome driver using path: "+path);
-		result = new ChromeDriver(new ChromeDriverService.Builder()
-				.usingDriverExecutable(new File(path))
-				.withLogFile(null).build() //TODO consider integrating this in new LOgger object (when i implement it)
-				,capabilities);
+    	System.setProperty("webdriver.chrome.driver",path);
+		result = new ChromeDriver(capabilities);
 		
 		initWindow(result);
 		
@@ -89,10 +87,8 @@ public class DriverFactory {
 		
 		capabilities.setCapability(OperaOptions.CAPABILITY, options);
 		System.out.println("building Opera driver using path: "+path);
-		result = new OperaDriver(new OperaDriverService.Builder()
-				.usingDriverExecutable(new File(path))
-				.withLogFile(null).build() //TODO consider integrating this in new LOgger object (when i implement it)
-				,capabilities);
+    	System.setProperty("webdriver.opera.driver",path);
+		result = new OperaDriver(capabilities);
 		
 		initWindow(result);
 		return result;
@@ -111,10 +107,27 @@ public class DriverFactory {
 		//capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 		
 		System.out.println("building IE driver using path: "+path);
-		result = new InternetExplorerDriver(new InternetExplorerDriverService.Builder()
-				.usingDriverExecutable(new File(path))
-				.withLogFile(null).build() //TODO consider integrating this in new LOgger object (when i implement it)
-				,capabilities);
+    	System.setProperty("webdriver.ie.driver",path);
+
+		result = new InternetExplorerDriver(capabilities);
+		
+		initWindow(result);
+		return result;
+	}
+	
+	private WebDriver createFirefox(String path){
+		WebDriver  result;
+		
+		FirefoxOptions options = new FirefoxOptions();
+		//options.addArguments("");// try to place window out of view of user
+
+		DesiredCapabilities capabilities = new DesiredCapabilities();
+		//capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);             
+		
+		capabilities.setCapability(FirefoxOptions.FIREFOX_OPTIONS, options);
+		System.out.println("building Firefox driver with paath: "+path);
+    	System.setProperty("webdriver.gecko.driver",path);
+		result = new FirefoxDriver(capabilities);
 		
 		initWindow(result);
 		return result;

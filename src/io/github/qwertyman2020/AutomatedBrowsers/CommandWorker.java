@@ -22,7 +22,7 @@ public class CommandWorker extends SwingWorker<Void,Status> {
 	@Override
 	protected Void doInBackground() throws Exception {
 		
-		Status status = new Status();
+		//Status status = new Status();
 		//TODO initial setup
 		
 
