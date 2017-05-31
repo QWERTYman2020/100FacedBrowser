@@ -5,14 +5,6 @@ public enum DriverType {
 	
 	public static DriverType convertFromString(String string) throws RuntimeException{
 		switch(string){
-		case "ChromeDriver32": return DriverType.Chrome32;	
-		case "ChromeDriver64": return DriverType.Chrome64;	
-		case "OperaDriver32": return DriverType.Opera32;	
-		case "OperaDriver64": return DriverType.Opera64;	
-		case "IEDriver32": return DriverType.IE32;	
-		case "IEDriver64": return DriverType.IE64;	
-		case "FirefoxDriver32": return DriverType.Firefox32;	
-		case "FirefoxDriver64": return DriverType.Firefox64;
 		case "Chrome32": return DriverType.Chrome32;	
 		case "Chrome64": return DriverType.Chrome64;	
 		case "Opera32": return DriverType.Opera32;	
@@ -22,7 +14,7 @@ public enum DriverType {
 		case "Firefox32": return DriverType.Firefox32;	
 		case "Firefox64": return DriverType.Firefox64;
 		case "All": return DriverType.All;
-		default: throw new RuntimeException("string \""+string+ "\" found is not a valid drivertype.");
+		default: throw new RuntimeException("string \""+string+ "\" is not a valid drivertype.");
 		}
 	}
 	
