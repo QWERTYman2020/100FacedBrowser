@@ -1,5 +1,12 @@
 package io.github.qwertyman2020.AutomatedBrowsers;
 
+/** struct for keeping information to be passed to interface
+ * 
+ * currently not in use
+ * 
+ * @author QWERTYman2020
+ *
+ */
 public class Status {
 	
 	private static final int maxBarLength = 100;

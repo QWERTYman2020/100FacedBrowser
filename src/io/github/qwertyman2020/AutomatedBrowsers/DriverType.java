@@ -1,5 +1,10 @@
 package io.github.qwertyman2020.AutomatedBrowsers;
 
+/** enum which contains contains all supported drivertypes.
+ * 
+ * @author QWERTYman2020
+ *
+ */
 public enum DriverType {
 	Chrome64, Chrome32, Opera64, Opera32, IE32, IE64,Firefox32,Firefox64, All;
 	

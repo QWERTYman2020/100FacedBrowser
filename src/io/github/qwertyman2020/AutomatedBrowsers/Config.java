@@ -13,9 +13,9 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
-/** config.properties reader
+/** config.properties reader and holding object
  * 
- * @author Bart Terpstra
+ * @author QWERTYman2020
  */
 public class Config {
 	

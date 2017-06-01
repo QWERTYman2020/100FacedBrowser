@@ -7,6 +7,13 @@ import javax.swing.SwingWorker;
 
 import org.openqa.selenium.WebDriver;
 
+/**worker thread that manipulates a WebDriver based on which command is passed.
+ * 
+ * flakey implementation, would recomend replacing it ASAP
+ * 
+ * @author QWERTYman2020
+ *
+ */
 public class CommandWorker extends SwingWorker<Void,Status> {
 
 	//private static final String propertiesPath ="config.properties";

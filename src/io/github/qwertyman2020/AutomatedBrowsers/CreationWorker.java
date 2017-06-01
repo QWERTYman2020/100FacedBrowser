@@ -1,12 +1,15 @@
 package io.github.qwertyman2020.AutomatedBrowsers;
 
 
-import java.awt.Window;
-
 import javax.swing.SwingWorker;
 
-import org.openqa.selenium.WebDriver;
-
+/** worker thread that creates the specified browser
+ * 
+ * great target for structure changes
+ * 
+ * @author QWERTYman2020
+ *
+ */
 public class CreationWorker extends SwingWorker<Void,Void> {
 
 	private DriverFactory factory;

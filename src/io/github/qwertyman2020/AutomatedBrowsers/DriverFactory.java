@@ -17,7 +17,11 @@ import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-
+/** class for creating instances of browsers on the correct places on screen.
+ * 
+ * @author QWERTYman2020
+ *
+ */
 public class DriverFactory {
 	private static int screenWidth;
 	private static int browserWidth;
