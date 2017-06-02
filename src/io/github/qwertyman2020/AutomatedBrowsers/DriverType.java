@@ -23,10 +23,24 @@ public enum DriverType {
 		}
 	}
 	
+	//TODO make sure this method does not return empty array
+	/**converts DriverType array to string array
+	 * 
+	 * may return arrays smaller than original.
+	 * may return empty array.
+	 * 
+	 * @param DriverType array
+	 * @return String array
+	 */
 	public static String[] convertToStringArray(DriverType[] oldList){
 		String[] result = new String[oldList.length];
 		for(int x=0;x<oldList.length;x++){
-			result[x]=oldList[x].toString();
+			try{
+				result[x]=oldList[x].toString();
+			}catch (RuntimeException e){
+				//TODO replace with logger?
+				System.out.println("warning: "+e.getMessage()+" excluded from array.");
+			}
 		}
 		return result;
 	}

@@ -17,24 +17,21 @@ public class CreationWorker extends SwingWorker<Void,Void> {
 	private String path;
 	private mainGUI window;
 	public CreationWorker(DriverFactory factory, DriverType key, String path,mainGUI window){
-		//TODO set variables
 		this.factory = factory;
 		this.key = key;
 		this.path = path;
 		this.window=window;
 	}
 
+	/**adds a new webdriver to the driver Map in mainGUI.
+	 * 
+	 */
+	
 	@Override
 	protected Void doInBackground() throws Exception {
 		
 		//TODO replace system outs with a logger object.
-		/*
-		System.out.println("initial setup completed");
-		status.setTitle("initial setup completed");
-		status.setProgress(1);
-		this.publish(status); //allows data to flow from this thread to other places in the program
-		*/
-		 window.putDriver(key, factory.createWebDriver(key,path));
+		window.putDriver(key, factory.createWebDriver(key,path));
 		return null;
 	}
 	

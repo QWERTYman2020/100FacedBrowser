@@ -7,8 +7,6 @@ import java.io.InputStream;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.InvalidPathException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -138,6 +136,11 @@ public class Config {
 		return result.toPathHashMap(driverFolderPath);
 	}
 	
+	/** uses the objects property variable to create a hashmap with paths to driverexecutables.
+	 * 
+	 * @param prePath
+	 * @return a hashmap with relatively safe paths to driver executables
+	 */
 	private HashMap<DriverType,String> toPathHashMap(String prePath){
 
 		HashMap<DriverType,String> result = new HashMap<DriverType, String>();
@@ -163,9 +166,5 @@ public class Config {
 	
 	private boolean isEmpty(){
 		return prop.isEmpty();
-	}
-	
-	private Properties getProperties(){
-		return this.prop;
 	}
 }

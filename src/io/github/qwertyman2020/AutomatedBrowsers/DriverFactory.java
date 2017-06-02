@@ -137,8 +137,14 @@ public class DriverFactory {
 		return result;
 	}
 	
-	private WebDriver initWindow(WebDriver result){
-		Window window = result.manage().window();
+	/**resizes and positions browser.
+	 * 
+	 * will start placing at 0,0 but increase x by browserwidth until screen width is reached.
+	 * @param driver
+	 */
+	
+	private void initWindow(WebDriver driver){
+		Window window = driver.manage().window();
 		window.setPosition(new Point(nextX, nextY));
 		window.setSize(new Dimension(browserWidth, browserHeight));
 		if(nextX+browserWidth<screenWidth){
@@ -146,6 +152,5 @@ public class DriverFactory {
 		}else{
 			nextX=screenWidth;
 		}
-		return result;
 	}
 }
