@@ -1,5 +1,6 @@
 package io.github.qwertyman2020.AutomatedBrowsers;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class CommandWorker extends SwingWorker<Void,Status> {
 	}
 
 	@Override
-	protected Void doInBackground() throws Exception {
+	protected Void doInBackground() throws RuntimeException, MalformedURLException {
 		
 		//Status status = new Status();
 		//TODO initial setup
@@ -51,6 +52,7 @@ public class CommandWorker extends SwingWorker<Void,Status> {
 		return null;
 	}
 
+	/* pointless code unless status is revisted
 	//takes care of .publish().
 	@Override
 	protected void process(List<Status> res){
@@ -58,7 +60,8 @@ public class CommandWorker extends SwingWorker<Void,Status> {
 			System.out.println(status.getTitle()+" prog:"+status.getProgress());
 			window.updateGUI(status);
 		}
-	}
+	}*/
+	
 	
 	//triggers when thread is closed/terminated
 	@Override

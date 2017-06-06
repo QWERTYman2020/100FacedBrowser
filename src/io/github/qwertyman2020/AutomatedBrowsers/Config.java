@@ -42,13 +42,14 @@ public class Config {
 	 * 
 	 * attempts to read as much from .properties file as possible.
 	 */
-	public void readAll() throws AccessDeniedException{
+	public void readAll() throws AccessDeniedException, InvalidPathException{
 		File file = new File(this.path);
+		
 		if(!file.exists()){
-			throw new InvalidPathException("A config file","a config file does not exist.");
+			throw new InvalidPathException(path,"a config file does not exist.");
 		}
 		if(!file.canRead()){
-			throw new AccessDeniedException(file.getPath(),"","can't read a config file file.");
+			throw new AccessDeniedException(file.getPath(),"","can't read this config file.");
 		}
 
 		prop = new Properties();
@@ -60,9 +61,7 @@ public class Config {
 
 			// load a properties file
 			prop.load(input);
-		
-
-			
+	
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
@@ -82,6 +81,9 @@ public class Config {
 	
 	/** creates a generic .properties file in given path
 	 * 
+	 * pre:  called when config file was not found
+	 * post:  created a generic config file in the location specified
+	 * 
 	 * @param String to path
 	 * @throws AccessDeniedException
 	 */
@@ -90,9 +92,16 @@ public class Config {
 		
 		//create a .properties file in the path that is supplied.
 		//if(!file.canWrite()){throws}
+		
+		//safety test creation location
+		//create stream
+		//write static final variable to the file
 	}
 	
 	/** creates a generic .properties file for Drivers
+	 * 
+	 * pre:  called when config file was not found
+	 * post:  created a generic config file in the location specified
 	 * 
 	 * @param file
 	 * @throws AccessDeniedException
@@ -102,6 +111,10 @@ public class Config {
 		
 		//create a .properties file in the path that is supplied.
 		//if(!file.canWrite()){throws}
+		
+		//safety test creation location
+		//create stream
+		//write static final variable to the file
 	}
 	
 	
@@ -130,9 +143,26 @@ public class Config {
 		if(result.isEmpty()){
 			throw new RuntimeException("Driver Config was empty.");
 		}
-		//TODO iterate to make sure each key has a value associated with it.
-		//TODO make sure all paths are valid and executable
+		Set<Object> keySet = result.prop.keySet();
+		for(Object t:keySet){
+			try{
+				String evalPath= result.prop.getProperty(t.toString());
+				File f = new File(evalPath);
+				if(!file.exists()||!file.canExecute()){
+					keySet.remove(t);
+					System.out.println("Warning: "+evalPath+" was not a valid driver path");
+				}else{
+					System.out.print(evalPath + " is a valid driver path");
+				}
+			}catch(Exception e){
+				System.out.println("unprecedented fault appeared in 'Config' class, trying to carry on");
+				System.out.println(e.getMessage());
+			}
+		}
 		
+		if(result.isEmpty()){
+			throw new RuntimeException("Driver Config contained no valid/useable driver paths.");
+		}
 		return result.toPathHashMap(driverFolderPath);
 	}
 	
@@ -147,20 +177,15 @@ public class Config {
 		Set<Object> keySet = prop.keySet();
 			for(Object t:keySet){	        
 				try{
-					if(new File(prePath+File.separator+prop.getProperty((String) t)).canExecute()){
-						result.put(DriverType.convertFromString((String) t), prePath+File.separator+prop.getProperty((String) t));
-					}
+					result.put(DriverType.convertFromString((String) t), prePath+File.separator+prop.getProperty((String) t));
 				}catch(RuntimeException e){
 					System.out.println(e.toString());
-					e.printStackTrace();
-	        	//TODO throw warning for invalid drivertype in config
-	        }
+					e.printStackTrace();	        }
 	    }
 		if(!result.isEmpty()){
 			return result;
 		}else{
 			throw new RuntimeException("no paths inside driver.properties are executable or exist.");
-			//TODO throw a fitting error
 		}
 	}
 	

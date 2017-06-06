@@ -10,14 +10,13 @@ import javax.swing.SwingUtilities;
 
 import org.openqa.selenium.WebDriver;
 
-import javafx.scene.input.KeyCode;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.nio.file.AccessDeniedException;
+import java.nio.file.InvalidPathException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.awt.event.ActionEvent;
@@ -26,10 +25,8 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
-import javax.swing.JScrollBar;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyAdapter;
@@ -47,7 +44,7 @@ public class mainGUI extends JFrame implements Runnable {
 	private JProgressBar progressBar;
 	private static mainGUI  window;
 	private volatile Status status;
-	private JTextField adressField; //TODO refactor this name.
+	private JTextField adressField;
 	private JTextField textField;
 	private Config mainCFG;
 	private HashMap<DriverType,String> pathMap;
@@ -80,31 +77,35 @@ public class mainGUI extends JFrame implements Runnable {
 		try {
 			mainCFG.readAll();
 			System.out.println("main config created succesfully");
-			System.out.println(mainCFG.getProperty("DriverFolder").orElse("but property was empty?"));
-		} catch (AccessDeniedException e) {
-			// TODO Auto-generated catch block
+			System.out.println("found DriverFolder: "+mainCFG.getProperty("DriverFolder").orElseThrow(()-> new RuntimeException("Driver folder property was missing from properties file.")));		
+		}catch(AccessDeniedException e){		//incase the expected config file can not be read
 			System.out.print("caught AccessDeniedException (check permissions of main config file)");
 			System.out.println(e.toString());
 			e.printStackTrace();
+		}catch(InvalidPathException e){			//incase the expected config file path is does not exist.
+			//TODO warning
+			//TODO optional, create generic, warning
+			//TODO use generic properties file
 		}
+		
+		//find the config file in the "Driver Folder"
+		//read the config file
+		//make sure it contains entries which are valid executables
+		//print all valid drivers found
 		try{
 			pathMap = mainCFG.getDriverPathHashMap();
-			System.out.println("pathMap: "+ mainCFG.toString());
-			//check if all drivers exist and can be executed.
-			//remove from list if not.
+			System.out.println("found and safe drivers:");
 			Set<DriverType> keySet = pathMap.keySet();
 			for(DriverType t:keySet){
-		        //TODO verification code
+				System.out.println(t.toString()+" - "+pathMap.get(t).toString());
 			}
-			//TODO check if all drivers exist and are executable
 		}catch(Exception e){
-			System.out.println("getDriverFolderHashMap is broken");
+			System.out.println("Error occured while trying to get the .properties file in the Driver Folder");
 			System.out.println(e.toString());
 			e.printStackTrace();
-			//TODO disable all buttons on init, create popup
 		}
-		//TODO comment out for ddesigner errors
-		factory = new DriverFactory(mainCFG);
+		factory = new DriverFactory(mainCFG); 		//you will need to comment out  this statement to prevernt GUI designer errors
+		
 		initialize();
 	}
 
@@ -208,8 +209,8 @@ public class mainGUI extends JFrame implements Runnable {
 		
 		
 		//TODO change to Action enum
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"leftclick", "select", "focus", "rightclick", "type"}));
+		JComboBox<Action> comboBox_1 = new JComboBox<Action>();
+		comboBox_1.setModel(new DefaultComboBoxModel<Action> (new Action[] {Action.leftClick, Action.rightClick}));
 		comboBox_1.setBounds(78, 107, 86, 20);
 		frame.getContentPane().add(comboBox_1);
 		
@@ -309,5 +310,6 @@ public class mainGUI extends JFrame implements Runnable {
 		// TODO Auto-generated method stub
 		//i forgot why this was here.
 		//i think it is required by "runnable"
+		//someone should really look into this :^)
 	}
 }
