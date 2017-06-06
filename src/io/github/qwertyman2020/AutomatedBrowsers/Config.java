@@ -147,8 +147,8 @@ public class Config {
 		for(Object t:keySet){
 			try{
 				String evalPath= result.prop.getProperty(t.toString());
-				File f = new File(evalPath);
-				if(!file.exists()||!file.canExecute()){
+				File driverEval = new File(evalPath);
+				if(!driverEval.exists()||!driverEval.canExecute()){
 					keySet.remove(t);
 					System.out.println("Warning: "+evalPath+" was not a valid driver path");
 				}else{

@@ -6,7 +6,6 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
 import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 
 import org.openqa.selenium.WebDriver;
 
@@ -45,7 +44,6 @@ public class mainGUI extends JFrame implements Runnable {
 	public JFrame frame;
 	private JProgressBar progressBar;
 	private static mainGUI  window;
-	private volatile Status status;
 	private JTextField adressField;
 	private JTextField textField;
 	private Config mainCFG;
@@ -142,7 +140,7 @@ public class mainGUI extends JFrame implements Runnable {
 				Set<DriverType> keySet = driverMap.keySet();
 				for(DriverType t:keySet){
 					Command toExecute = new Command(Action.Previous);
-					CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);		    
+					CommandWorker worker = new CommandWorker(driverMap.get(t),toExecute);		    
 					worker.execute();
 				}
 			}
@@ -159,7 +157,7 @@ public class mainGUI extends JFrame implements Runnable {
 				Set<DriverType> keySet = driverMap.keySet();
 				for(DriverType t:keySet){
 					Command toExecute = new Command(Action.Next);
-					CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);		    
+					CommandWorker worker = new CommandWorker(driverMap.get(t),toExecute);		    
 					worker.execute();
 				}
 			}
@@ -176,7 +174,7 @@ public class mainGUI extends JFrame implements Runnable {
 					Set<DriverType> keySet = driverMap.keySet();
 					for(DriverType t:keySet){
 						Command toExecute = new Command(Action.Goto,adressField.getText());
-						CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);
+						CommandWorker worker = new CommandWorker(driverMap.get(t),toExecute);
 						worker.execute();
 					}
 				}
@@ -281,18 +279,6 @@ public class mainGUI extends JFrame implements Runnable {
 		frame.getContentPane().add(btnNewButton_4);
 	}
 	
-	public void updateGUI(Status status){
-		   setStatus(status);
-		   //use this.status for all gui data
-		   progressBar.setValue(Math.toIntExact(Math.round(this.status.getProgress())));
-		   frame.setTitle(this.status.getTitle());
-		   SwingUtilities.invokeLater(this);
-	}
-	
-	private synchronized void setStatus(Status status) {
-		  this.status = status;
-	}
-
 	public void switchButton(JButton btn){
 		btn.setEnabled(!btn.isEnabled());
 	}
@@ -301,7 +287,7 @@ public class mainGUI extends JFrame implements Runnable {
 		Set<DriverType> drivers = map.keySet();
 		for(DriverType t:drivers){
 			Command toExecute = new Command(Action.Quit);
-			CommandWorker worker = new CommandWorker(window,map.get(t),toExecute);		    
+			CommandWorker worker = new CommandWorker(map.get(t),toExecute);		    
 			worker.execute();
 		}
 	}
