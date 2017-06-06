@@ -25,6 +25,8 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -79,6 +81,7 @@ public class mainGUI extends JFrame implements Runnable {
 			System.out.println("main config created succesfully");
 			System.out.println("found DriverFolder: "+mainCFG.getProperty("DriverFolder").orElseThrow(()-> new RuntimeException("Driver folder property was missing from properties file.")));		
 		}catch(AccessDeniedException e){		//incase the expected config file can not be read
+			JOptionPane.showMessageDialog(frame, "caught AccessDeniedException (check permissions of main config file)/n"+e.getMessage());
 			System.out.print("caught AccessDeniedException (check permissions of main config file)");
 			System.out.println(e.toString());
 			e.printStackTrace();
@@ -100,7 +103,7 @@ public class mainGUI extends JFrame implements Runnable {
 				System.out.println(t.toString()+" - "+pathMap.get(t).toString());
 			}
 		}catch(Exception e){
-			System.out.println("Error occured while trying to get the .properties file in the Driver Folder");
+			JOptionPane.showMessageDialog(frame, e.getMessage());
 			System.out.println(e.toString());
 			e.printStackTrace();
 		}
@@ -221,6 +224,7 @@ public class mainGUI extends JFrame implements Runnable {
 		JButton btnNewButton_3 = new JButton("do");
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(frame, "yet to be implemented");
 			}
 		});
 		btnNewButton_3.setBounds(77, 137, 51, 23);
@@ -262,7 +266,7 @@ public class mainGUI extends JFrame implements Runnable {
 							}
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
-								System.out.println(e.toString());
+  								System.out.println(e.toString());
 								e.printStackTrace();
 							}finally{
 								switchButton(btnNewButton_4);

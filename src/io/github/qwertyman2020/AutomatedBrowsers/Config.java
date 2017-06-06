@@ -133,7 +133,7 @@ public class Config {
 		String driverFolderPath = this.getProperty("DriverFolder").orElseThrow(() -> new RuntimeException("no \"DriverFolder\" path in confguration file."));
 		File file = new File(driverFolderPath);
 		if(!file.isDirectory() || !file.exists()){
-			throw new InvalidPathException("DriverFolder","Driver Folder path in configuration is invalid.");
+			throw new InvalidPathException(driverFolderPath,"Driver Folder path in configuration is invalid.");
 		}
 		if(!file.canRead()){
 			throw new AccessDeniedException(file.getPath(),"","Driver Folder Path had read access denied.");
@@ -152,7 +152,7 @@ public class Config {
 					keySet.remove(t);
 					System.out.println("Warning: "+evalPath+" was not a valid driver path");
 				}else{
-					System.out.print(evalPath + " is a valid driver path");
+					System.out.println(evalPath + " is a valid driver path");
 				}
 			}catch(Exception e){
 				System.out.println("unprecedented fault appeared in 'Config' class, trying to carry on");
