@@ -6,5 +6,5 @@ package io.github.qwertyman2020.AutomatedBrowsers;
  *
  */
 public enum Action {
-	Goto,Previous,Next,Quit;
+	Goto,Previous,Next,Quit,leftClick,rightClick,Hover;
 }

@@ -6,19 +6,16 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
 import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 
 import org.openqa.selenium.WebDriver;
 
-import javafx.scene.input.KeyCode;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.nio.file.AccessDeniedException;
+import java.nio.file.InvalidPathException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
@@ -26,10 +23,10 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
-import javax.swing.JScrollBar;
+import javax.swing.JOptionPane;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyAdapter;
@@ -46,8 +43,7 @@ public class mainGUI extends JFrame implements Runnable {
 	public JFrame frame;
 	private JProgressBar progressBar;
 	private static mainGUI  window;
-	private volatile Status status;
-	private JTextField adressField; //TODO refactor this name.
+	private JTextField adressField;
 	private JTextField textField;
 	private Config mainCFG;
 	private HashMap<DriverType,String> pathMap;
@@ -80,31 +76,36 @@ public class mainGUI extends JFrame implements Runnable {
 		try {
 			mainCFG.readAll();
 			System.out.println("main config created succesfully");
-			System.out.println(mainCFG.getProperty("DriverFolder").orElse("but property was empty?"));
-		} catch (AccessDeniedException e) {
-			// TODO Auto-generated catch block
+			System.out.println("found DriverFolder: "+mainCFG.getProperty("DriverFolder").orElseThrow(()-> new RuntimeException("Driver folder property was missing from properties file.")));		
+		}catch(AccessDeniedException e){		//incase the expected config file can not be read
+			JOptionPane.showMessageDialog(frame, "caught AccessDeniedException (check permissions of main config file)/n"+e.getMessage());
 			System.out.print("caught AccessDeniedException (check permissions of main config file)");
 			System.out.println(e.toString());
 			e.printStackTrace();
+		}catch(InvalidPathException e){			//incase the expected config file path is does not exist.
+			//TODO warning
+			//TODO optional, create generic, warning
+			//TODO use generic properties file
 		}
+		
+		//find the config file in the "Driver Folder"
+		//read the config file
+		//make sure it contains entries which are valid executables
+		//print all valid drivers found
 		try{
 			pathMap = mainCFG.getDriverPathHashMap();
-			System.out.println("pathMap: "+ mainCFG.toString());
-			//check if all drivers exist and can be executed.
-			//remove from list if not.
+			System.out.println("found and safe drivers:");
 			Set<DriverType> keySet = pathMap.keySet();
 			for(DriverType t:keySet){
-		        //TODO verification code
+				System.out.println(t.toString()+" - "+pathMap.get(t).toString());
 			}
-			//TODO check if all drivers exist and are executable
 		}catch(Exception e){
-			System.out.println("getDriverFolderHashMap is broken");
+			JOptionPane.showMessageDialog(frame, e.getMessage());
 			System.out.println(e.toString());
 			e.printStackTrace();
-			//TODO disable all buttons on init, create popup
 		}
-		//TODO comment out for ddesigner errors
-		factory = new DriverFactory(mainCFG);
+		factory = new DriverFactory(mainCFG); 		//you will need to comment out  this statement to prevernt GUI designer errors
+		
 		initialize();
 	}
 
@@ -116,7 +117,7 @@ public class mainGUI extends JFrame implements Runnable {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-				cleanupDrivers(driverMap);
+				window.cleanupDrivers();
 			}
 		});
 		frame.setBounds(100, 100, 451, 300);
@@ -138,7 +139,7 @@ public class mainGUI extends JFrame implements Runnable {
 				Set<DriverType> keySet = driverMap.keySet();
 				for(DriverType t:keySet){
 					Command toExecute = new Command(Action.Previous);
-					CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);		    
+					CommandWorker worker = new CommandWorker(driverMap.get(t),toExecute);		    
 					worker.execute();
 				}
 			}
@@ -155,7 +156,7 @@ public class mainGUI extends JFrame implements Runnable {
 				Set<DriverType> keySet = driverMap.keySet();
 				for(DriverType t:keySet){
 					Command toExecute = new Command(Action.Next);
-					CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);		    
+					CommandWorker worker = new CommandWorker(driverMap.get(t),toExecute);		    
 					worker.execute();
 				}
 			}
@@ -172,7 +173,7 @@ public class mainGUI extends JFrame implements Runnable {
 					Set<DriverType> keySet = driverMap.keySet();
 					for(DriverType t:keySet){
 						Command toExecute = new Command(Action.Goto,adressField.getText());
-						CommandWorker worker = new CommandWorker(window,driverMap.get(t),toExecute);
+						CommandWorker worker = new CommandWorker(driverMap.get(t),toExecute);
 						worker.execute();
 					}
 				}
@@ -208,8 +209,8 @@ public class mainGUI extends JFrame implements Runnable {
 		
 		
 		//TODO change to Action enum
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"leftclick", "select", "focus", "rightclick", "type"}));
+		JComboBox<Action> comboBox_1 = new JComboBox<Action>();
+		comboBox_1.setModel(new DefaultComboBoxModel<Action> (new Action[] {Action.leftClick, Action.rightClick}));
 		comboBox_1.setBounds(78, 107, 86, 20);
 		frame.getContentPane().add(comboBox_1);
 		
@@ -220,6 +221,7 @@ public class mainGUI extends JFrame implements Runnable {
 		JButton btnNewButton_3 = new JButton("do");
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(frame, "yet to be implemented");
 			}
 		});
 		btnNewButton_3.setBounds(77, 137, 51, 23);
@@ -261,7 +263,8 @@ public class mainGUI extends JFrame implements Runnable {
 							}
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
-								System.out.println(e.toString());
+								window.cleanupDrivers();
+  								System.out.println(e.toString());
 								e.printStackTrace();
 							}finally{
 								switchButton(btnNewButton_4);
@@ -276,27 +279,15 @@ public class mainGUI extends JFrame implements Runnable {
 		frame.getContentPane().add(btnNewButton_4);
 	}
 	
-	public void updateGUI(Status status){
-		   setStatus(status);
-		   //use this.status for all gui data
-		   progressBar.setValue(Math.toIntExact(Math.round(this.status.getProgress())));
-		   frame.setTitle(this.status.getTitle());
-		   SwingUtilities.invokeLater(this);
-	}
-	
-	private synchronized void setStatus(Status status) {
-		  this.status = status;
-	}
-
 	public void switchButton(JButton btn){
 		btn.setEnabled(!btn.isEnabled());
 	}
 
-	public static void cleanupDrivers(Map<DriverType,WebDriver> map){
-		Set<DriverType> drivers = map.keySet();
+	public  void cleanupDrivers(){
+		Set<DriverType> drivers = driverMap.keySet();
 		for(DriverType t:drivers){
 			Command toExecute = new Command(Action.Quit);
-			CommandWorker worker = new CommandWorker(window,map.get(t),toExecute);		    
+			CommandWorker worker = new CommandWorker(driverMap.get(t),toExecute);		    
 			worker.execute();
 		}
 	}
@@ -309,5 +300,6 @@ public class mainGUI extends JFrame implements Runnable {
 		// TODO Auto-generated method stub
 		//i forgot why this was here.
 		//i think it is required by "runnable"
+		//someone should really look into this :^)
 	}
 }

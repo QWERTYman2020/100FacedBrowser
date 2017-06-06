@@ -1,7 +1,7 @@
 package io.github.qwertyman2020.AutomatedBrowsers;
 
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import javax.swing.SwingWorker;
 
@@ -14,20 +14,18 @@ import org.openqa.selenium.WebDriver;
  * @author QWERTYman2020
  *
  */
-public class CommandWorker extends SwingWorker<Void,Status> {
+public class CommandWorker extends SwingWorker<Void,Void> {
 
 	//private static final String propertiesPath ="config.properties";
-	private mainGUI window;
 	private WebDriver driver;
 	private Command command;
-	public CommandWorker(mainGUI window, WebDriver driver,Command command){
-		this.window=window;
+	public CommandWorker(WebDriver driver,Command command){
 		this.driver=driver;
 		this.command = command;
 	}
 
 	@Override
-	protected Void doInBackground() throws Exception {
+	protected Void doInBackground() throws RuntimeException, MalformedURLException {
 		
 		//Status status = new Status();
 		//TODO initial setup
@@ -51,6 +49,7 @@ public class CommandWorker extends SwingWorker<Void,Status> {
 		return null;
 	}
 
+	/* pointless code unless status is revisted
 	//takes care of .publish().
 	@Override
 	protected void process(List<Status> res){
@@ -58,7 +57,8 @@ public class CommandWorker extends SwingWorker<Void,Status> {
 			System.out.println(status.getTitle()+" prog:"+status.getProgress());
 			window.updateGUI(status);
 		}
-	}
+	}*/
+	
 	
 	//triggers when thread is closed/terminated
 	@Override

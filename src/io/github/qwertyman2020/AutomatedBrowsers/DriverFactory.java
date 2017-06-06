@@ -39,7 +39,7 @@ public class DriverFactory {
 	}
 	
 	
-	public WebDriver createWebDriver(DriverType type,String path){
+	public WebDriver createWebDriver(DriverType type,String path) throws RuntimeException{
 		
 		switch(type){
 		case Chrome64: return createChrome(path);
