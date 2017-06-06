@@ -16,7 +16,6 @@ import java.awt.event.ActionListener;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.InvalidPathException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
@@ -118,7 +117,7 @@ public class mainGUI extends JFrame implements Runnable {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-				cleanupDrivers(driverMap);
+				window.cleanupDrivers();
 			}
 		});
 		frame.setBounds(100, 100, 451, 300);
@@ -264,6 +263,7 @@ public class mainGUI extends JFrame implements Runnable {
 							}
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
+								window.cleanupDrivers();
   								System.out.println(e.toString());
 								e.printStackTrace();
 							}finally{
@@ -283,11 +283,11 @@ public class mainGUI extends JFrame implements Runnable {
 		btn.setEnabled(!btn.isEnabled());
 	}
 
-	public static void cleanupDrivers(Map<DriverType,WebDriver> map){
-		Set<DriverType> drivers = map.keySet();
+	public  void cleanupDrivers(){
+		Set<DriverType> drivers = driverMap.keySet();
 		for(DriverType t:drivers){
 			Command toExecute = new Command(Action.Quit);
-			CommandWorker worker = new CommandWorker(map.get(t),toExecute);		    
+			CommandWorker worker = new CommandWorker(driverMap.get(t),toExecute);		    
 			worker.execute();
 		}
 	}
